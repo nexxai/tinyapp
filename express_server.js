@@ -17,12 +17,18 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("Ok");
+  const id = generateRandomString();
+  urlDatabase[id] = req.body.longURL;
+  res.redirect(`/urls/${id}`);
 });
 
 app.get("/", (req, res) => {
   res.send("Hello!");
+});
+
+app.get("/u/:id", (req, res) => {
+  const longURL = urlDatabase[req.params.id];
+  res.redirect(longURL);
 });
 
 app.get("/urls.json", (req, res) => {
