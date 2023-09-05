@@ -9,15 +9,23 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        <%= username %>
-          <form method="POST" action="/login" class="row d-flex">
-            <div class="col-auto">
-              <input name="username" type="text" placeholder="Username" class="form-control" />
-            </div>
-            <div class="col-auto">
-              <button type="submit" class="btn btn-secondary form-control">Submit</button>
-            </div>
-          </form>
+        <% if (username) { %>
+          Logged in as: <%= username %>
+            <form method="POST" action="/logout" class="row d-flex">
+              <div class="col-auto">
+                <button type="submit" class="btn btn-danger form-control">Logout</button>
+              </div>
+            </form>
+            <% } else { %>
+              <form method="POST" action="/login" class="row d-flex">
+                <div class="col-auto">
+                  <input name="username" type="text" placeholder="Username" class="form-control" />
+                </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-secondary form-control">Submit</button>
+                </div>
+              </form>
+              <% } %>
       </div>
     </div>
   </nav>
