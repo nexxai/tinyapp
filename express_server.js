@@ -15,9 +15,9 @@ const urlDatabase = {
 
 const users = {};
 
-const getUser = function (value, field) {
+const getUser = function (key, value) {
   for (let userId in users) {
-    if (users[userId][field] === value) {
+    if (users[userId][key] === value) {
       return users[userId];
     }
   }
@@ -48,7 +48,7 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const user = getUser(req.cookies["user_id"], "id");
+  const user = getUser("id", req.cookies["user_id"]);
   const templateVars = {
     user,
     urls: urlDatabase,
@@ -58,7 +58,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const user = getUser(req.cookies["user_id"], "id");
+  const user = getUser("id", req.cookies["user_id"]);
   const templateVars = { user };
   res.render("urls_new", templateVars);
 });
@@ -76,7 +76,7 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const user = getUser(req.cookies["user_id"], "id");
+  const user = getUser("id", req.cookies["user_id"]);
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id],
@@ -96,6 +96,17 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { name, email, password } = req.body;
+
+  if (!email || !password || !name) {
+    res.status(400);
+    return res.send(`Name, email and password values are all required`);
+  }
+
+  if (getUser("email", email)) {
+    res.status(400);
+    return res.send(`User with email ${email} already exists`);
+  }
+
   const userId = generateRandomString();
   users[userId] = {
     id: userId,
@@ -105,7 +116,6 @@ app.post("/register", (req, res) => {
   };
 
   res.cookie("user_id", userId);
-  console.log(users);
   res.redirect("/urls");
 });
 
