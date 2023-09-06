@@ -125,13 +125,27 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
+  const { email, password } = req.body;
+
+  const user = getUser("email", email);
+
+  if (!user) {
+    res.status(403);
+    return res.send("User not found");
+  }
+
+  if (user && password !== user.password) {
+    res.status(403);
+    return res.send("Password mismatch");
+  }
+
+  res.cookie("user_id", user.id);
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 app.listen(PORT, () => {
