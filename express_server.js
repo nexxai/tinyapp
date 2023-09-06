@@ -13,6 +13,16 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
+const users = {};
+
+const getUser = function (userIdToFind) {
+  for (let userId in users) {
+    if (userId === userIdToFind) {
+      return users[userId];
+    }
+  }
+};
+
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
@@ -38,8 +48,9 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  const user = getUser(req.cookies["user_id"]);
   const templateVars = {
-    username: req.cookies["username"],
+    user,
     urls: urlDatabase,
   };
 
@@ -47,7 +58,8 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { username: req.cookies["username"] };
+  const user = getUser(req.cookies["user_id"]);
+  const templateVars = { user };
   res.render("urls_new", templateVars);
 });
 
@@ -64,10 +76,11 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
+  const user = getUser(req.cookies["user_id"]);
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"],
+    user,
   };
   res.render("urls_show", templateVars);
 });
@@ -77,8 +90,23 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = { username: null };
+  const templateVars = { user: null };
   res.render("register", templateVars);
+});
+
+app.post("/register", (req, res) => {
+  const { name, email, password } = req.body;
+  const userId = generateRandomString();
+  users[userId] = {
+    id: userId,
+    name,
+    email,
+    password,
+  };
+
+  res.cookie("user_id", userId);
+  console.log(users);
+  res.redirect("/urls");
 });
 
 app.post("/login", (req, res) => {
