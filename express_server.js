@@ -35,6 +35,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.post("/urls", (req, res) => {
+  const user = getUser("id", req.cookies["user_id"]);
+
+  if (!user) {
+    const templateVars = { user: null };
+    res.status(403);
+    return res.render("must_login_to_create_new_urls", templateVars);
+  }
+
   const id = generateRandomString();
   urlDatabase[id] = req.body.longURL;
   res.redirect(`/urls/${id}`);
@@ -65,6 +73,11 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const user = getUser("id", req.cookies["user_id"]);
+
+  if (!user) {
+    res.redirect("/login");
+  }
+
   const templateVars = { user };
   res.render("urls_new", templateVars);
 });
