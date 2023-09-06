@@ -23,6 +23,12 @@ const getUser = function (key, value) {
   }
 };
 
+const redirectToUrlsIfLoggedIn = function (req, res) {
+  if (req.cookies["user_id"]) {
+    res.redirect("/urls");
+  }
+};
+
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
@@ -90,6 +96,8 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
+  redirectToUrlsIfLoggedIn(req, res);
+
   const templateVars = { user: null };
   res.render("register", templateVars);
 });
@@ -120,6 +128,8 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
+  redirectToUrlsIfLoggedIn(req, res);
+
   const templateVars = { user: null };
   res.render("login", templateVars);
 });
