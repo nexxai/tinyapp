@@ -54,6 +54,13 @@ app.get("/", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
+
+  if (!longURL) {
+    const templateVars = { user: null };
+    res.status(404);
+    return res.render("short_url_not_found", templateVars);
+  }
+
   res.redirect(longURL);
 });
 
