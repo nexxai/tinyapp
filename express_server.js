@@ -15,9 +15,9 @@ const urlDatabase = {
 
 const users = {};
 
-const getUser = function (userIdToFind) {
+const getUser = function (value, field) {
   for (let userId in users) {
-    if (userId === userIdToFind) {
+    if (users[userId][field] === value) {
       return users[userId];
     }
   }
@@ -48,7 +48,7 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const user = getUser(req.cookies["user_id"]);
+  const user = getUser(req.cookies["user_id"], "id");
   const templateVars = {
     user,
     urls: urlDatabase,
@@ -58,7 +58,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const user = getUser(req.cookies["user_id"]);
+  const user = getUser(req.cookies["user_id"], "id");
   const templateVars = { user };
   res.render("urls_new", templateVars);
 });
@@ -76,7 +76,7 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const user = getUser(req.cookies["user_id"]);
+  const user = getUser(req.cookies["user_id"], "id");
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id],
