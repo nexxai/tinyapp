@@ -29,6 +29,18 @@ const getUser = function (key, value) {
   }
 };
 
+const urlsForUser = function (userId) {
+  let urls = {};
+
+  for (let url in urlDatabase) {
+    if (urlDatabase[url].userID === userId) {
+      urls[url] = urlDatabase[url];
+    }
+  }
+
+  return urls;
+};
+
 const redirectToUrlsIfLoggedIn = function (req, res) {
   if (req.cookies["user_id"]) {
     res.redirect("/urls");
@@ -76,9 +88,18 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const user = getUser("id", req.cookies["user_id"]);
+
+  if (!user) {
+    const templateVars = { user: null };
+    res.status(403);
+    return res.render("errors/must_login_to_see_urls", templateVars);
+  }
+
+  const urls = urlsForUser(user.id);
+
   const templateVars = {
     user,
-    urls: urlDatabase,
+    urls,
   };
 
   res.render("urls_index", templateVars);
@@ -96,22 +117,66 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls/delete/:id", (req, res) => {
+  const user = getUser("id", req.cookies["user_id"]);
+  const url = urlDatabase[req.params.id];
+
+  if (!user) {
+    const templateVars = { user: null };
+    res.status(403);
+    return res.render("errors/must_login_to_see_urls", templateVars);
+  }
+
+  if (user.id !== url.userID) {
+    const templateVars = { user: null };
+    res.status(403);
+    return res.render("errors/can_only_view_own_urls", templateVars);
+  }
+
   delete urlDatabase[req.params.id];
 
   res.redirect("/urls");
 });
 
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id].longURL = req.body.url;
+  const user = getUser("id", req.cookies["user_id"]);
+  const url = urlDatabase[req.params.id];
+
+  if (!user) {
+    const templateVars = { user: null };
+    res.status(403);
+    return res.render("errors/must_login_to_see_urls", templateVars);
+  }
+
+  if (user.id !== url.userID) {
+    const templateVars = { user: null };
+    res.status(403);
+    return res.render("errors/can_only_view_own_urls", templateVars);
+  }
+
+  url.longURL = req.body.url;
 
   res.redirect("/urls");
 });
 
 app.get("/urls/:id", (req, res) => {
   const user = getUser("id", req.cookies["user_id"]);
+  const url = urlDatabase[req.params.id];
+
+  if (!user) {
+    const templateVars = { user: null };
+    res.status(403);
+    return res.render("errors/must_login_to_see_urls", templateVars);
+  }
+
+  if (user.id !== url.userID) {
+    const templateVars = { user: null };
+    res.status(403);
+    return res.render("errors/can_only_view_own_urls", templateVars);
+  }
+
   const templateVars = {
     id: req.params.id,
-    longURL: urlDatabase[req.params.id].longURL,
+    longURL: url.longURL,
     user,
   };
   res.render("urls_show", templateVars);
