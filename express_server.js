@@ -40,7 +40,7 @@ app.post("/urls", (req, res) => {
   if (!user) {
     const templateVars = { user: null };
     res.status(403);
-    return res.render("must_login_to_create_new_urls", templateVars);
+    return res.render("errors/must_login_to_create_new_urls", templateVars);
   }
 
   const id = generateRandomString();
@@ -58,7 +58,7 @@ app.get("/u/:id", (req, res) => {
   if (!longURL) {
     const templateVars = { user: null };
     res.status(404);
-    return res.render("short_url_not_found", templateVars);
+    return res.render("errors/short_url_not_found", templateVars);
   }
 
   res.redirect(longURL);
