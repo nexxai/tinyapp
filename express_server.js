@@ -1,5 +1,8 @@
 const express = require("express");
 const cookieSession = require("cookie-session");
+const urlRoutes = require("routes/urls");
+const shortUrlRoutes = require("routes/shortUrls");
+
 const {
   authenticateUser,
   generateRandomString,
@@ -41,139 +44,11 @@ app.use(
   })
 );
 
-app.post("/urls", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
-
-  if (!user) {
-    const templateVars = { user: null };
-    res.status(403);
-    return res.render("errors/must_login_to_create_new_urls", templateVars);
-  }
-
-  const id = generateRandomString();
-  const newUrl = {
-    userID: user.id,
-    longURL: req.body.longURL,
-  };
-
-  urlDatabase[id] = newUrl;
-  res.redirect(`/urls/${id}`);
-});
+app.use("/urls", urlRoutes);
+app.use("/u", shortUrlRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello!");
-});
-
-app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id].longURL;
-
-  if (!longURL) {
-    const templateVars = { user: null };
-    res.status(404);
-    return res.render("errors/short_url_not_found", templateVars);
-  }
-
-  res.redirect(longURL);
-});
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/urls", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
-
-  if (!user) {
-    const templateVars = { user: null };
-    res.status(403);
-    return res.render("errors/must_login_to_see_urls", templateVars);
-  }
-
-  const urls = urlsForUser(user.id, urlDatabase);
-
-  const templateVars = {
-    user,
-    urls,
-  };
-
-  res.render("urls_index", templateVars);
-});
-
-app.get("/urls/new", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
-
-  if (!user) {
-    res.redirect("/login");
-  }
-
-  const templateVars = { user };
-  res.render("urls_new", templateVars);
-});
-
-app.post("/urls/delete/:id", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
-  const url = urlDatabase[req.params.id];
-
-  if (!user) {
-    const templateVars = { user: null };
-    res.status(403);
-    return res.render("errors/must_login_to_see_urls", templateVars);
-  }
-
-  if (user.id !== url.userID) {
-    const templateVars = { user: null };
-    res.status(403);
-    return res.render("errors/can_only_view_own_urls", templateVars);
-  }
-
-  delete urlDatabase[req.params.id];
-
-  res.redirect("/urls");
-});
-
-app.post("/urls/:id", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
-  const url = urlDatabase[req.params.id];
-
-  if (!user) {
-    const templateVars = { user: null };
-    res.status(403);
-    return res.render("errors/must_login_to_see_urls", templateVars);
-  }
-
-  if (user.id !== url.userID) {
-    const templateVars = { user: null };
-    res.status(403);
-    return res.render("errors/can_only_view_own_urls", templateVars);
-  }
-
-  url.longURL = req.body.url;
-
-  res.redirect("/urls");
-});
-
-app.get("/urls/:id", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
-  const url = urlDatabase[req.params.id];
-
-  if (!user) {
-    const templateVars = { user: null };
-    res.status(403);
-    return res.render("errors/must_login_to_see_urls", templateVars);
-  }
-
-  if (user.id !== url.userID) {
-    const templateVars = { user: null };
-    res.status(403);
-    return res.render("errors/can_only_view_own_urls", templateVars);
-  }
-
-  const templateVars = {
-    id: req.params.id,
-    longURL: url.longURL,
-    user,
-  };
-  res.render("urls_show", templateVars);
 });
 
 app.get("/hello", (req, res) => {
