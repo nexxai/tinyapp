@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
+const getUsersDb = require("./dbs/userDatabase");
 
 const getUser = function (key, value, usersDb) {
   for (let userId in usersDb) {
@@ -7,6 +8,16 @@ const getUser = function (key, value, usersDb) {
       return usersDb[userId];
     }
   }
+};
+
+const getCurrentUser = function (req, res, next) {
+  const userId = req.session.user_id;
+
+  const user = getUsersDb[userId];
+
+  req.user = user;
+
+  next();
 };
 
 const getUrlsForUser = function (userId, urlsDb) {
@@ -41,10 +52,10 @@ const registerNewUser = function (name, email, password, usersDb) {
   return userId;
 };
 
-const authenticateUser = function (email, password, usersDb, res) {
-  const user = getUser("email", email, usersDb);
+const authenticateUser = function (email, password, res) {
+  const user = getUser("email", email, getUsersDb);
 
-  const templateVars = { user: null };
+  const templateVars = { user };
   if (!user) {
     res.status(403);
     return res.render("./errors/auth/unknown_user", templateVars);
@@ -67,6 +78,7 @@ const generateRandomString = function () {
 module.exports = {
   authenticateUser,
   generateRandomString,
+  getCurrentUser,
   getUser,
   getUrlsForUser,
   registerNewUser,

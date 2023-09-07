@@ -1,15 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const users = require("../dbs/userDatabase");
 const urlDatabase = require("../dbs/urlDatabase");
 
-const { generateRandomString, getUser, getUrlsForUser } = require("../helpers");
+const { generateRandomString, getUrlsForUser } = require("../helpers");
 
 router.post("/", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
+  const user = req.user;
 
   if (!user) {
-    const templateVars = { user: null };
+    const templateVars = { user };
     res.status(403);
     return res.render("errors/must_login_to_create_new_urls", templateVars);
   }
@@ -29,10 +28,10 @@ router.get("/urls.json", (req, res) => {
 });
 
 router.get("/", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
+  const user = req.user;
 
   if (!user) {
-    const templateVars = { user: null };
+    const templateVars = { user };
     res.status(403);
     return res.render("errors/must_login_to_see_urls", templateVars);
   }
@@ -48,7 +47,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/new", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
+  const user = req.user;
 
   if (!user) {
     res.redirect("/login");
@@ -59,17 +58,17 @@ router.get("/new", (req, res) => {
 });
 
 router.post("/delete/:id", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
+  const user = req.user;
   const url = urlDatabase[req.params.id];
 
   if (!user) {
-    const templateVars = { user: null };
+    const templateVars = { user };
     res.status(403);
     return res.render("errors/must_login_to_see_urls", templateVars);
   }
 
   if (user.id !== url.userID) {
-    const templateVars = { user: null };
+    const templateVars = { user };
     res.status(403);
     return res.render("errors/can_only_view_own_urls", templateVars);
   }
@@ -80,17 +79,17 @@ router.post("/delete/:id", (req, res) => {
 });
 
 router.post("/:id", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
+  const user = req.user;
   const url = urlDatabase[req.params.id];
 
   if (!user) {
-    const templateVars = { user: null };
+    const templateVars = { user };
     res.status(403);
     return res.render("errors/must_login_to_see_urls", templateVars);
   }
 
   if (user.id !== url.userID) {
-    const templateVars = { user: null };
+    const templateVars = { user };
     res.status(403);
     return res.render("errors/can_only_view_own_urls", templateVars);
   }
@@ -101,28 +100,26 @@ router.post("/:id", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-  const user = getUser("id", req.session.user_id, users);
+  const user = req.user;
   const url = urlDatabase[req.params.id];
 
+  let templateVars = { user };
   if (!user) {
-    const templateVars = { user: null };
     res.status(403);
     return res.render("errors/must_login_to_see_urls", templateVars);
   }
 
   if (!url) {
-    const templateVars = { user };
     res.status(403);
     return res.render("errors/short_url_not_found", templateVars);
   }
 
   if (user.id !== url.userID) {
-    const templateVars = { user };
     res.status(403);
     return res.render("errors/can_only_view_own_urls", templateVars);
   }
 
-  const templateVars = {
+  templateVars = {
     id: req.params.id,
     longURL: url.longURL,
     user,
