@@ -1,7 +1,7 @@
 {
   "name": "tinyapp",
   "version": "1.0.0",
-  "description": "",
+  "description": "A node.js app for creating and maintaining shortened URLs",
   "main": "index.js",
   "scripts": {
     "start": "./node_modules/.bin/nodemon -L express_server.js",
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/nexxai/tinyapp.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "JT Smith",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/nexxai/tinyapp/issues"
