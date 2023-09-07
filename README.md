@@ -1,11 +1,22 @@
-# TinyApp
+# TinyApp Project
 
-This URL shortener allows you to create and maintain a collection of URLs that map to shortcodes, accessible from anywhere.
+TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs (à la bit.ly).
 
-## Installation
+## Final Product
 
-Simply clone the repo and run `npm install ; npm start`  This will install the required NPM packages and start the Express webserver
+![List of URLs](images/list.png)
+![Edit screen](images/edit.png)
 
-## Testing
+## Dependencies
 
-Run `npm test` to run the test suite.
+- Node.js
+- Express
+- EJS
+- bcryptjs
+- cookie-session
+
+## Getting Started
+
+- Install all dependencies (using the `npm install` command).
+- Run the development web server using the `npm start` command.
+- Run the test suite using the `npm test` command
