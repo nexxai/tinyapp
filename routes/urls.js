@@ -57,7 +57,7 @@ router.get("/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-router.post("/delete/:id", (req, res) => {
+router.delete("/delete/:id", (req, res) => {
   const user = req.user;
   const url = urlDatabase[req.params.id];
 
@@ -78,7 +78,7 @@ router.post("/delete/:id", (req, res) => {
   res.redirect("/urls");
 });
 
-router.post("/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   const user = req.user;
   const url = urlDatabase[req.params.id];
 

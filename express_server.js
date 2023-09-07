@@ -1,6 +1,7 @@
 // Web server packages
 const express = require("express");
 const cookieSession = require("cookie-session");
+const methodOverride = require("method-override");
 
 // Routes
 const urlRoutes = require("./routes/urls");
@@ -19,9 +20,11 @@ const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
 
 // MIDDLEWARE
-
 // Access body contents with `req.body`
 app.use(express.urlencoded({ extended: true }));
+
+// Allow non-GET/POST routes
+app.use(methodOverride("_method"));
 
 // Encrypt the cookies to prevent tampering
 app.use(
