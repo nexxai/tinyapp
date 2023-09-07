@@ -49,6 +49,24 @@ const redirectToUrlsIfLoggedIn = function (req, res) {
   }
 };
 
+const authenticateUser = function (email, password) {
+  const user = getUser("email", email);
+
+  if (!user) {
+    res.status(403);
+    return res.send("User not found");
+  }
+
+  const correctPassword = bcrypt.compareSync(password, user.password);
+
+  if (user && !correctPassword) {
+    res.status(403);
+    return res.send("Password mismatch");
+  }
+
+  return user;
+};
+
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
@@ -237,19 +255,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
-  const user = getUser("email", email);
-
-  if (!user) {
-    res.status(403);
-    return res.send("User not found");
-  }
-
-  const correctPassword = bcrypt.compareSync(password, user.password);
-
-  if (user && !correctPassword) {
-    res.status(403);
-    return res.send("Password mismatch");
-  }
+  const user = authenticateUser(email, password);
 
   res.cookie("user_id", user.id);
   res.redirect("/urls");
