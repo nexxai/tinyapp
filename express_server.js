@@ -3,6 +3,7 @@ const cookieSession = require("cookie-session");
 const urlRoutes = require("./routes/urls");
 const shortUrlRoutes = require("./routes/shortUrls");
 const authRoutes = require("./routes/auth");
+const homePage = require("./routes/homePage");
 
 const app = express();
 const PORT = 8080; // default port 8080
@@ -24,17 +25,10 @@ app.use(
 );
 
 // Include the routes from the files in ./routes
+app.use(homePage);
 app.use(authRoutes);
 app.use("/urls", urlRoutes);
 app.use("/u", shortUrlRoutes);
-
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
