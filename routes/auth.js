@@ -45,7 +45,7 @@ router.get("/login", (req, res) => {
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
 
-  const user = authenticateUser(email, password, users);
+  const user = authenticateUser(email, password, users, res);
 
   req.session.user_id = user.id;
   res.redirect("/urls");

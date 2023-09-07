@@ -1,5 +1,11 @@
 const { assert } = require("chai");
-const { getUser, getUrlsForUser } = require("../helpers");
+const {
+  getUser,
+  getUrlsForUser,
+  registerNewUser,
+  authenticateUser,
+  generateRandomString,
+} = require("../helpers");
 
 const testUsers = {
   userRandomID: {
@@ -29,7 +35,7 @@ const testUrlDb = {
   },
 };
 
-describe("getUserByEmail", function () {
+describe("#getUserByEmail", function () {
   it("should return a user with valid email", function () {
     const user = getUser("email", "user@example.com", testUsers);
     const expectedUserID = "userRandomID";
@@ -44,7 +50,7 @@ describe("getUserByEmail", function () {
   });
 });
 
-describe("getUrlsForUser", function () {
+describe("#getUrlsForUser", function () {
   it("returns all of the urls for a given user", function () {
     const urls = getUrlsForUser("userRandomID", testUrlDb);
 
@@ -56,5 +62,52 @@ describe("getUrlsForUser", function () {
     const urls = getUrlsForUser("doesNotExist", testUrlDb);
 
     assert.deepEqual(urls, {});
+  });
+});
+
+describe("#registerNewUser", function () {
+  it("registers a new user and returns its user id", function () {
+    const userId = registerNewUser(
+      "Bob",
+      "test@example.org",
+      "examplePassword",
+      testUsers
+    );
+
+    // Make sure we get a user ID back
+    assert.isString(userId);
+
+    // Make sure the user was actually created and stored in the DB
+    assert.isTrue(testUsers.hasOwnProperty(userId));
+  });
+});
+
+describe("#authenticateUser", function () {
+  it("returns the user object if successfully logged in", function () {
+    registerNewUser("Bob", "test@example.org", "examplePassword", testUsers);
+
+    const user = authenticateUser(
+      "test@example.org",
+      "examplePassword",
+      testUsers
+    );
+
+    assert.isObject(user);
+    assert.equal(user.name, "Bob");
+  });
+});
+
+describe("#generateRandomString", function () {
+  it("returns 6 random characters upon each call", function () {
+    const str1 = generateRandomString();
+    const str2 = generateRandomString();
+    const str3 = generateRandomString();
+
+    assert.equal(str1.length, 6);
+    assert.equal(str2.length, 6);
+    assert.equal(str3.length, 6);
+    assert.notEqual(str1, str2);
+    assert.notEqual(str3, str2);
+    assert.notEqual(str3, str1);
   });
 });

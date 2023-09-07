@@ -41,7 +41,7 @@ const registerNewUser = function (name, email, password, usersDb) {
   return userId;
 };
 
-const authenticateUser = function (email, password, usersDb) {
+const authenticateUser = function (email, password, usersDb, res) {
   const user = getUser("email", email, usersDb);
 
   if (!user) {
