@@ -95,6 +95,24 @@ describe("#authenticateUser", function () {
     assert.isObject(user);
     assert.equal(user.name, "Bob");
   });
+
+  it("returns a failed status if the user does not exist", function () {
+    const user = authenticateUser("balh@blah.com", "password", testUsers);
+
+    assert.equal(user, "user_not_found");
+  });
+
+  it("returns a failed status if the password is incorrect", function () {
+    registerNewUser("Bob", "test@example.org", "examplePassword", testUsers);
+
+    const user = authenticateUser(
+      "test@example.org",
+      "wrongPassword",
+      testUsers
+    );
+
+    assert.equal(user, "invalid_password");
+  });
 });
 
 describe("#generateRandomString", function () {

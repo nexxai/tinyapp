@@ -47,7 +47,17 @@ router.get("/login", (req, res) => {
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
 
-  const user = authenticateUser(email, password, res);
+  const user = authenticateUser(email, password, users);
+  const templateVars = { user: null };
+  if (user === "user_not_found") {
+    res.status(403);
+    return res.render("./errors/auth/unknown_user", templateVars);
+  }
+
+  if (user === "invalid_password") {
+    res.status(403);
+    return res.render("./errors/auth/invalid_password", templateVars);
+  }
 
   req.session.user_id = user.id;
   return res.redirect("/urls");
