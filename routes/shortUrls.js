@@ -1,5 +1,6 @@
 const express = require("express");
-const router = express.router();
+const router = express.Router();
+const urlDatabase = require("../dbs/urlDatabase");
 
 router.get("/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id].longURL;

@@ -1,5 +1,9 @@
 const express = require("express");
-const router = express.router();
+const router = express.Router();
+const users = require("../dbs/userDatabase");
+const urlDatabase = require("../dbs/urlDatabase");
+
+const { generateRandomString, getUser, urlsForUser } = require("../helpers");
 
 router.post("/", (req, res) => {
   const user = getUser("id", req.session.user_id, users);
@@ -43,7 +47,7 @@ router.get("/", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-router.get("/urls/new", (req, res) => {
+router.get("/new", (req, res) => {
   const user = getUser("id", req.session.user_id, users);
 
   if (!user) {
@@ -54,7 +58,7 @@ router.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-router.post("/urls/delete/:id", (req, res) => {
+router.post("/delete/:id", (req, res) => {
   const user = getUser("id", req.session.user_id, users);
   const url = urlDatabase[req.params.id];
 
@@ -75,7 +79,7 @@ router.post("/urls/delete/:id", (req, res) => {
   res.redirect("/urls");
 });
 
-router.post("/urls/:id", (req, res) => {
+router.post("/:id", (req, res) => {
   const user = getUser("id", req.session.user_id, users);
   const url = urlDatabase[req.params.id];
 
@@ -96,7 +100,7 @@ router.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
-router.get("/urls/:id", (req, res) => {
+router.get("/:id", (req, res) => {
   const user = getUser("id", req.session.user_id, users);
   const url = urlDatabase[req.params.id];
 
