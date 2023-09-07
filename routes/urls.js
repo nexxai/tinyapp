@@ -110,8 +110,14 @@ router.get("/:id", (req, res) => {
     return res.render("errors/must_login_to_see_urls", templateVars);
   }
 
+  if (!url) {
+    const templateVars = { user };
+    res.status(403);
+    return res.render("errors/short_url_not_found", templateVars);
+  }
+
   if (user.id !== url.userID) {
-    const templateVars = { user: null };
+    const templateVars = { user };
     res.status(403);
     return res.render("errors/can_only_view_own_urls", templateVars);
   }

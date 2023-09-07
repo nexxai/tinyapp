@@ -3,15 +3,15 @@ const router = express.Router();
 const urlDatabase = require("../dbs/urlDatabase");
 
 router.get("/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id].longURL;
+  const url = urlDatabase[req.params.id];
 
-  if (!longURL) {
+  if (!url) {
     const templateVars = { user: null };
     res.status(404);
     return res.render("errors/short_url_not_found", templateVars);
   }
 
-  res.redirect(longURL);
+  res.redirect(url.longURL);
 });
 
 module.exports = router;

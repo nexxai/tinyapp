@@ -19,14 +19,16 @@ router.get("/register", (req, res) => {
 router.post("/register", (req, res) => {
   const { name, email, password } = req.body;
 
+  const templateVars = { user: null };
+
   if (!email || !password || !name) {
     res.status(400);
-    return res.send(`Name, email and password values are all required`);
+    return res.render("./errors/auth/missing_field", templateVars);
   }
 
   if (getUser("email", email)) {
     res.status(400);
-    return res.send(`User with email ${email} already exists`);
+    return res.render("./errors/auth/email_already_exists", templateVars);
   }
 
   const userId = registerNewUser(name, email, password, users);
@@ -48,7 +50,7 @@ router.post("/login", (req, res) => {
   const user = authenticateUser(email, password, users, res);
 
   req.session.user_id = user.id;
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 router.post("/logout", (req, res) => {

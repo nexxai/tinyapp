@@ -44,16 +44,17 @@ const registerNewUser = function (name, email, password, usersDb) {
 const authenticateUser = function (email, password, usersDb, res) {
   const user = getUser("email", email, usersDb);
 
+  const templateVars = { user: null };
   if (!user) {
     res.status(403);
-    return res.send("User not found");
+    return res.render("./errors/auth/unknown_user", templateVars);
   }
 
   const correctPassword = bcrypt.compareSync(password, user.password);
 
   if (user && !correctPassword) {
     res.status(403);
-    return res.send("Password mismatch");
+    return res.render("./errors/auth/invalid_password", templateVars);
   }
 
   return user;
