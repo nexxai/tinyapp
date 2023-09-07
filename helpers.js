@@ -12,7 +12,6 @@ const getUser = function (key, value, usersDb) {
 
 const getCurrentUser = function (req, res, next) {
   const userId = req.session.user_id;
-
   const user = getUsersDb[userId];
 
   req.user = user;
