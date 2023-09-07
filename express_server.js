@@ -49,6 +49,20 @@ const redirectToUrlsIfLoggedIn = function (req, res) {
   }
 };
 
+const registerNewUser = function (name, email, password) {
+  const userId = generateRandomString();
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+  users[userId] = {
+    id: userId,
+    name,
+    email,
+    password: hashedPassword,
+  };
+
+  return userId;
+};
+
 const authenticateUser = function (email, password) {
   const user = getUser("email", email);
 
@@ -231,15 +245,7 @@ app.post("/register", (req, res) => {
     return res.send(`User with email ${email} already exists`);
   }
 
-  const userId = generateRandomString();
-  const hashedPassword = bcrypt.hashSync(password, 10);
-
-  users[userId] = {
-    id: userId,
-    name,
-    email,
-    password: hashedPassword,
-  };
+  const userId = registerNewUser(name, email, password);
 
   res.cookie("user_id", userId);
   res.redirect("/urls");
