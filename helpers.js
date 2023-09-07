@@ -9,7 +9,7 @@ const getUser = function (key, value, usersDb) {
   }
 };
 
-const urlsForUser = function (userId, urlsDb) {
+const getUrlsForUser = function (userId, urlsDb) {
   let urls = {};
 
   for (let url in urlsDb) {
@@ -67,7 +67,7 @@ module.exports = {
   authenticateUser,
   generateRandomString,
   getUser,
-  urlsForUser,
+  getUrlsForUser,
   registerNewUser,
   redirectToUrlsIfLoggedIn,
 };

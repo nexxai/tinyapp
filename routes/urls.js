@@ -3,7 +3,7 @@ const router = express.Router();
 const users = require("../dbs/userDatabase");
 const urlDatabase = require("../dbs/urlDatabase");
 
-const { generateRandomString, getUser, urlsForUser } = require("../helpers");
+const { generateRandomString, getUser, getUrlsForUser } = require("../helpers");
 
 router.post("/", (req, res) => {
   const user = getUser("id", req.session.user_id, users);
@@ -37,7 +37,7 @@ router.get("/", (req, res) => {
     return res.render("errors/must_login_to_see_urls", templateVars);
   }
 
-  const urls = urlsForUser(user.id, urlDatabase);
+  const urls = getUrlsForUser(user.id, urlDatabase);
 
   const templateVars = {
     user,

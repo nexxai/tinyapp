@@ -1,5 +1,5 @@
 const { assert } = require("chai");
-const { getUser, urlsForUser } = require("../helpers");
+const { getUser, getUrlsForUser } = require("../helpers");
 
 const testUsers = {
   userRandomID: {
@@ -41,5 +41,20 @@ describe("getUserByEmail", function () {
     const user = getUser("email", "does@not.exist", testUsers);
 
     assert.equal(user, undefined);
+  });
+});
+
+describe("getUrlsForUser", function () {
+  it("returns all of the urls for a given user", function () {
+    const urls = getUrlsForUser("userRandomID", testUrlDb);
+
+    assert.equal(Object.keys(urls).length, 2);
+    assert.isTrue(urls.hasOwnProperty("abc123"));
+  });
+
+  it("returns an empty object if the supplied user has no urls", function () {
+    const urls = getUrlsForUser("doesNotExist", testUrlDb);
+
+    assert.deepEqual(urls, {});
   });
 });
