@@ -31,12 +31,6 @@ const getUrlsForUser = function (userId, urlsDb) {
   return urls;
 };
 
-const redirectToUrlsIfLoggedIn = function (req, res) {
-  if (req.session.user_id) {
-    res.redirect("/urls");
-  }
-};
-
 const registerNewUser = function (name, email, password, usersDb) {
   const userId = generateRandomString();
   const hashedPassword = bcrypt.hashSync(password, 10);
@@ -79,5 +73,4 @@ module.exports = {
   getUser,
   getUrlsForUser,
   registerNewUser,
-  redirectToUrlsIfLoggedIn,
 };

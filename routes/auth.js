@@ -2,18 +2,15 @@ const express = require("express");
 const router = express.Router();
 const users = require("../dbs/userDatabase");
 
-const {
-  authenticateUser,
-  getUser,
-  registerNewUser,
-  redirectToUrlsIfLoggedIn,
-} = require("../helpers");
+const { authenticateUser, getUser, registerNewUser } = require("../helpers");
 
 router.get("/register", (req, res) => {
-  redirectToUrlsIfLoggedIn(req, res);
+  if (req.user) {
+    return res.redirect("/urls");
+  }
 
   const templateVars = { user: null };
-  res.render("register", templateVars);
+  return res.render("register", templateVars);
 });
 
 router.post("/register", (req, res) => {
@@ -34,14 +31,16 @@ router.post("/register", (req, res) => {
   const userId = registerNewUser(name, email, password, users);
 
   req.session.user_id = userId;
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 router.get("/login", (req, res) => {
-  redirectToUrlsIfLoggedIn(req, res);
+  if (req.user) {
+    return res.redirect("/urls");
+  }
 
   const templateVars = { user: null };
-  res.render("login", templateVars);
+  return res.render("login", templateVars);
 });
 
 router.post("/login", (req, res) => {
@@ -65,7 +64,7 @@ router.post("/login", (req, res) => {
 
 router.post("/logout", (req, res) => {
   req.session = null;
-  res.redirect("/login");
+  return res.redirect("/login");
 });
 
 module.exports = router;

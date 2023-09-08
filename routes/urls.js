@@ -20,11 +20,11 @@ router.post("/", (req, res) => {
   };
 
   urlDatabase[id] = newUrl;
-  res.redirect(`/urls/${id}`);
+  return res.redirect(`/urls/${id}`);
 });
 
 router.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+  return res.json(urlDatabase);
 });
 
 router.get("/", (req, res) => {
@@ -43,18 +43,18 @@ router.get("/", (req, res) => {
     urls,
   };
 
-  res.render("urls_index", templateVars);
+  return res.render("urls_index", templateVars);
 });
 
 router.get("/new", (req, res) => {
   const user = req.user;
 
   if (!user) {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
 
   const templateVars = { user };
-  res.render("urls_new", templateVars);
+  return res.render("urls_new", templateVars);
 });
 
 router.delete("/delete/:id", (req, res) => {
@@ -75,7 +75,7 @@ router.delete("/delete/:id", (req, res) => {
 
   delete urlDatabase[req.params.id];
 
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 router.put("/:id", (req, res) => {
@@ -96,7 +96,7 @@ router.put("/:id", (req, res) => {
 
   url.longURL = req.body.url;
 
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 router.get("/:id", (req, res) => {
@@ -124,7 +124,7 @@ router.get("/:id", (req, res) => {
     longURL: url.longURL,
     user,
   };
-  res.render("urls_show", templateVars);
+  return res.render("urls_show", templateVars);
 });
 
 module.exports = router;
