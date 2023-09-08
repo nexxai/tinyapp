@@ -26,7 +26,7 @@ router.post("/register", (req, res) => {
     return res.render("./errors/auth/missing_field", templateVars);
   }
 
-  if (getUser("email", email)) {
+  if (getUser("email", email, users)) {
     res.status(400);
     return res.render("./errors/auth/email_already_exists", templateVars);
   }
