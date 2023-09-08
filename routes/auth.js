@@ -65,7 +65,6 @@ router.post("/login", (req, res) => {
 
 router.post("/logout", (req, res) => {
   req.session = null;
-  console.log(req.session);
   res.redirect("/login");
 });
 
